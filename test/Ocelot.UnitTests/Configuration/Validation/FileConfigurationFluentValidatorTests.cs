@@ -57,6 +57,7 @@
                 {
                     ServiceDiscoveryProvider = new FileServiceDiscoveryProvider
                     {
+                        Scheme = "https",
                         Host = "localhost",
                         Type = "ServiceFabric",
                         Port = 8500
@@ -90,6 +91,7 @@
                 {
                     ServiceDiscoveryProvider = new FileServiceDiscoveryProvider
                     {
+                        Scheme = "https",
                         Host = "localhost",
                         Type = "FakeServiceDiscoveryProvider",
                         Port = 8500
@@ -113,6 +115,7 @@
                 {
                     ServiceDiscoveryProvider = new FileServiceDiscoveryProvider
                     {
+                        Scheme = "https",
                         Host = "localhost",
                         Type = "FakeServiceDiscoveryProvider",
                         Port = 8500
@@ -147,6 +150,7 @@
                 {
                     ServiceDiscoveryProvider = new FileServiceDiscoveryProvider
                     {
+                        Scheme = "https",
                         Host = "localhost",
                         Type = "FakeServiceDiscoveryProvider",
                         Port = 8500
@@ -171,6 +175,7 @@
                 {
                     ServiceDiscoveryProvider = new FileServiceDiscoveryProvider
                     {
+                        Scheme = "https",
                         Host = "localhost",
                         Type = "FakeServiceDiscoveryProvider",
                         Port = 8500
@@ -206,6 +211,7 @@
                 {
                     ServiceDiscoveryProvider = new FileServiceDiscoveryProvider
                     {
+                        Scheme = "https",
                         Host = "localhost",
                         Type = "consul",
                         Port = 8500
@@ -1114,6 +1120,132 @@
         }
 
         [Fact]
+        public void configuration_is_not_valid_with_duplicate_reroutes_with_duplicated_upstreamhosts()
+        {
+            this.Given(x => x.GivenAConfiguration(new FileConfiguration
+            {
+                ReRoutes = new List<FileReRoute>
+                {
+                    new FileReRoute
+                    {
+                        DownstreamPathTemplate = "/api/products/",
+                        UpstreamPathTemplate = "/asdf/",
+                        DownstreamHostAndPorts = new List<FileHostAndPort>
+                        {
+                            new FileHostAndPort
+                            {
+                                Host = "bbc.co.uk",
+                            }
+                        },
+                        UpstreamHttpMethod = new List<string>(),
+                        UpstreamHost = "upstreamhost"
+                    },
+                    new FileReRoute
+                    {
+                        DownstreamPathTemplate = "/www/test/",
+                        UpstreamPathTemplate = "/asdf/",
+                        DownstreamHostAndPorts = new List<FileHostAndPort>
+                        {
+                            new FileHostAndPort
+                            {
+                                Host = "bbc.co.uk",
+                            }
+                        },
+                        UpstreamHttpMethod = new List<string>(),
+                        UpstreamHost = "upstreamhost"
+                    }
+                }
+            }))
+                .When(x => x.WhenIValidateTheConfiguration())
+                .Then(x => x.ThenTheResultIsNotValid())
+                 .And(x => x.ThenTheErrorMessageAtPositionIs(0, "reRoute /asdf/ has duplicate"))
+                .BDDfy();
+        }
+
+        [Fact]
+        public void configuration_is_valid_with_duplicate_reroutes_but_different_upstreamhosts()
+        {
+            this.Given(x => x.GivenAConfiguration(new FileConfiguration
+            {
+                ReRoutes = new List<FileReRoute>
+                {
+                    new FileReRoute
+                    {
+                        DownstreamPathTemplate = "/api/products/",
+                        UpstreamPathTemplate = "/asdf/",
+                        DownstreamHostAndPorts = new List<FileHostAndPort>
+                        {
+                            new FileHostAndPort
+                            {
+                                Host = "bbc.co.uk",
+                            }
+                        },
+                        UpstreamHttpMethod = new List<string>(),
+                        UpstreamHost = "upstreamhost111"
+                    },
+                    new FileReRoute
+                    {
+                        DownstreamPathTemplate = "/www/test/",
+                        UpstreamPathTemplate = "/asdf/",
+                        DownstreamHostAndPorts = new List<FileHostAndPort>
+                        {
+                            new FileHostAndPort
+                            {
+                                Host = "bbc.co.uk",
+                            }
+                        },
+                        UpstreamHttpMethod = new List<string>(),
+                        UpstreamHost = "upstreamhost222"
+                    }
+                }
+            }))
+                .When(x => x.WhenIValidateTheConfiguration())
+                .Then(x => x.ThenTheResultIsValid())
+                .BDDfy();
+        }
+
+        [Fact]
+        public void configuration_is_valid_with_duplicate_reroutes_but_one_upstreamhost_is_not_set()
+        {
+            this.Given(x => x.GivenAConfiguration(new FileConfiguration
+            {
+                ReRoutes = new List<FileReRoute>
+                {
+                    new FileReRoute
+                    {
+                        DownstreamPathTemplate = "/api/products/",
+                        UpstreamPathTemplate = "/asdf/",
+                        DownstreamHostAndPorts = new List<FileHostAndPort>
+                        {
+                            new FileHostAndPort
+                            {
+                                Host = "bbc.co.uk",
+                            }
+                        },
+                        UpstreamHttpMethod = new List<string>(),
+                        UpstreamHost = "upstreamhost"
+                    },
+                    new FileReRoute
+                    {
+                        DownstreamPathTemplate = "/www/test/",
+                        UpstreamPathTemplate = "/asdf/",
+                        DownstreamHostAndPorts = new List<FileHostAndPort>
+                        {
+                            new FileHostAndPort
+                            {
+                                Host = "bbc.co.uk",
+                            }
+                        },
+                        UpstreamHttpMethod = new List<string>()
+                    }
+                }
+            }))
+                .When(x => x.WhenIValidateTheConfiguration())
+                .Then(x => x.ThenTheResultIsValid())
+                .BDDfy();
+        }
+        
+        [Fact]
         public void configuration_is_invalid_with_invalid_rate_limit_configuration()
         {
             this.Given(x => x.GivenAConfiguration(new FileConfiguration
@@ -1197,6 +1329,7 @@
                 {
                     ServiceDiscoveryProvider = new FileServiceDiscoveryProvider
                     {
+                        Scheme = "https",
                         Type = "servicefabric",
                         Host = "localhost",
                         Port = 1234

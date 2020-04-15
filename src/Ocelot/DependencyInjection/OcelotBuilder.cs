@@ -1,5 +1,3 @@
-using Ocelot.Configuration.ChangeTracking;
-
 namespace Ocelot.DependencyInjection
 {
     using Microsoft.AspNetCore.Http;
@@ -11,6 +9,8 @@ namespace Ocelot.DependencyInjection
     using Ocelot.Cache;
     using Ocelot.Claims;
     using Ocelot.Configuration;
+    using Ocelot.ServiceDiscovery.Providers;
+    using Ocelot.Configuration.ChangeTracking;
     using Ocelot.Configuration.Creator;
     using Ocelot.Configuration.File;
     using Ocelot.Configuration.Parser;
@@ -56,8 +56,8 @@ namespace Ocelot.DependencyInjection
             Services = services;
             Services.Configure<FileConfiguration>(configurationRoot);
 
-            Services.TryAddSingleton<IOcelotCache<FileConfiguration>, InMemoryCache<FileConfiguration>>();
-            Services.TryAddSingleton<IOcelotCache<CachedResponse>, InMemoryCache<CachedResponse>>();
+            Services.TryAddSingleton<IOcelotCache<FileConfiguration>, AspMemoryCache<FileConfiguration>>();
+            Services.TryAddSingleton<IOcelotCache<CachedResponse>, AspMemoryCache<CachedResponse>>();
             Services.TryAddSingleton<IHttpResponseHeaderReplacer, HttpResponseHeaderReplacer>();
             Services.TryAddSingleton<IHttpContextRequestHeaderReplacer, HttpContextRequestHeaderReplacer>();
             Services.TryAddSingleton<IHeaderFindAndReplaceCreator, HeaderFindAndReplaceCreator>();
@@ -87,6 +87,10 @@ namespace Ocelot.DependencyInjection
             Services.TryAddSingleton<IFileConfigurationRepository, DiskFileConfigurationRepository>();
             Services.TryAddSingleton<IFileConfigurationSetter, FileAndInternalConfigurationSetter>();
             Services.TryAddSingleton<IServiceDiscoveryProviderFactory, ServiceDiscoveryProviderFactory>();
+            Services.AddSingleton<ILoadBalancerCreator, NoLoadBalancerCreator>();
+            Services.AddSingleton<ILoadBalancerCreator, RoundRobinCreator>();
+            Services.AddSingleton<ILoadBalancerCreator, CookieStickySessionsCreator>();
+            Services.AddSingleton<ILoadBalancerCreator, LeastConnectionCreator>();
             Services.TryAddSingleton<ILoadBalancerFactory, LoadBalancerFactory>();
             Services.TryAddSingleton<ILoadBalancerHouse, LoadBalancerHouse>();
             Services.TryAddSingleton<IOcelotLoggerFactory, AspDotNetLoggerFactory>();
@@ -166,6 +170,47 @@ namespace Ocelot.DependencyInjection
             where T : class, IDefinedAggregator
         {
             Services.AddTransient<IDefinedAggregator, T>();
+            return this;
+        }
+
+        public IOcelotBuilder AddCustomLoadBalancer<T>()
+            where T : ILoadBalancer, new()
+        {
+            AddCustomLoadBalancer((provider, reRoute, serviceDiscoveryProvider) => new T());
+            return this;
+        }
+        
+        public IOcelotBuilder AddCustomLoadBalancer<T>(Func<T> loadBalancerFactoryFunc) 
+            where T : ILoadBalancer
+        {
+            AddCustomLoadBalancer((provider, reRoute, serviceDiscoveryProvider) =>
+                loadBalancerFactoryFunc());
+            return this;
+        }
+
+        public IOcelotBuilder AddCustomLoadBalancer<T>(Func<IServiceProvider, T> loadBalancerFactoryFunc) 
+            where T : ILoadBalancer
+        {
+            AddCustomLoadBalancer((provider, reRoute, serviceDiscoveryProvider) =>
+                loadBalancerFactoryFunc(provider));
+            return this;
+        }
+
+        public IOcelotBuilder AddCustomLoadBalancer<T>(Func<DownstreamReRoute, IServiceDiscoveryProvider, T> loadBalancerFactoryFunc)
+            where T : ILoadBalancer
+        {
+            AddCustomLoadBalancer((provider, reRoute, serviceDiscoveryProvider) =>
+                loadBalancerFactoryFunc(reRoute, serviceDiscoveryProvider));
+            return this;
+        }
+
+        public IOcelotBuilder AddCustomLoadBalancer<T>(Func<IServiceProvider, DownstreamReRoute, IServiceDiscoveryProvider, T> loadBalancerFactoryFunc)
+            where T : ILoadBalancer
+        {
+            Services.AddSingleton<ILoadBalancerCreator>(provider =>
+                new DelegateInvokingLoadBalancerCreator<T>(
+                    (reRoute, serviceDiscoveryProvider) => 
+                        loadBalancerFactoryFunc(provider, reRoute, serviceDiscoveryProvider)));
             return this;
         }
 
