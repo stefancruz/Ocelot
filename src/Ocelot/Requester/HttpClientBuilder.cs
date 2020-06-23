@@ -1,5 +1,6 @@
 ﻿namespace Ocelot.Requester
 {
+    using Microsoft.AspNetCore.Http;
     using Ocelot.Configuration;
     using Ocelot.Logging;
     using System;
@@ -31,7 +32,7 @@
             _defaultTimeout = TimeSpan.FromSeconds(90);
         }
 
-        public IHttpClient Create(DownstreamRoute downstreamRoute)
+        public IHttpClient Create(DownstreamRoute downstreamRoute, HttpContext httpContext)
         {
             _cacheKey = downstreamRoute;
 
@@ -57,7 +58,7 @@
                 ? _defaultTimeout
                 : TimeSpan.FromMilliseconds(downstreamRoute.QosOptions.TimeoutValue);
 
-            _httpClient = new HttpClient(CreateHttpMessageHandler(handler, downstreamRoute))
+            _httpClient = new HttpClient(CreateHttpMessageHandler(handler, downstreamRoute, httpContext))
             {
                 Timeout = timeout
             };
@@ -104,10 +105,11 @@
             _cacheHandlers.Set(_cacheKey, _client, TimeSpan.FromHours(24));
         }
 
-        private HttpMessageHandler CreateHttpMessageHandler(HttpMessageHandler httpMessageHandler, DownstreamRoute request)
+        private HttpMessageHandler CreateHttpMessageHandler(HttpMessageHandler httpMessageHandler, 
+            DownstreamRoute request, HttpContext httpContext)
         {
             //todo handle error
-            var handlers = _factory.Get(request).Data;
+            var handlers = _factory.Get(request, httpContext).Data;
 
             handlers
                 .Select(handler => handler)
