@@ -551,7 +551,7 @@ namespace Ocelot.AcceptanceTests
             _ocelotClient = _ocelotServer.CreateClient();
         }
 
-        public void GivenOcelotIsRunningWithSpecficHandlersRegisteredInDi<TOne, TWo>()
+        public void GivenOcelotIsRunningWithSpecficHandlersRegisteredInDi<TOne, TWo>(Action<IdentityServerAuthenticationOptions> options, string authenticationProviderKey)
             where TOne : DelegatingHandler
             where TWo : DelegatingHandler
         {
@@ -573,6 +573,11 @@ namespace Ocelot.AcceptanceTests
                     s.AddOcelot()
                         .AddDelegatingHandler<TOne>()
                         .AddDelegatingHandler<TWo>();
+                    if (authenticationProviderKey != null && options != null)
+                    {
+                        s.AddAuthentication()
+                         .AddIdentityServerAuthentication(authenticationProviderKey, options);
+                    }
                 })
                 .Configure(a =>
                 {
@@ -870,15 +875,20 @@ namespace Ocelot.AcceptanceTests
 
         public void GivenIHaveAToken(string url)
         {
+            GivenIHaveAToken(url, "test");
+        }
+
+        public void GivenIHaveAToken(string url, string username)
+        {
             var tokenUrl = $"{url}/connect/token";
             var formData = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("client_id", "client"),
                 new KeyValuePair<string, string>("client_secret", "secret"),
                 new KeyValuePair<string, string>("scope", "api"),
-                new KeyValuePair<string, string>("username", "test"),
+                new KeyValuePair<string, string>("username", username),
                 new KeyValuePair<string, string>("password", "test"),
-                new KeyValuePair<string, string>("grant_type", "password")
+                new KeyValuePair<string, string>("grant_type", "password"),
             };
             var content = new FormUrlEncodedContent(formData);
 
