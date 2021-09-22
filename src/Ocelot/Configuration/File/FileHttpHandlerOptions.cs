@@ -8,6 +8,7 @@
             UseCookieContainer = false;
             UseProxy = true;
             MaxConnectionsPerServer = int.MaxValue;
+            UseDefaultCredentials = false;
         }
 
         public bool AllowAutoRedirect { get; set; }
@@ -19,5 +20,7 @@
         public bool UseProxy { get; set; }
 
         public int MaxConnectionsPerServer { get; set; }
+
+        public bool UseDefaultCredentials { get; set; }
     }
 }

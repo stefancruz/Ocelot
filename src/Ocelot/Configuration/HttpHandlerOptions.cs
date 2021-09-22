@@ -6,15 +6,15 @@
     /// </summary>
     public class HttpHandlerOptions
     {
-        public HttpHandlerOptions(bool allowAutoRedirect, bool useCookieContainer, bool useTracing, bool useProxy, int maxConnectionsPerServer)
+        public HttpHandlerOptions(bool allowAutoRedirect, bool useCookieContainer, bool useTracing, bool useProxy, int maxConnectionsPerServer, bool useDefaultCredentials)
         {
             AllowAutoRedirect = allowAutoRedirect;
             UseCookieContainer = useCookieContainer;
             UseTracing = useTracing;
             UseProxy = useProxy;
             MaxConnectionsPerServer = maxConnectionsPerServer;
+            UseDefaultCredentials = useDefaultCredentials;
         }
-
 
         /// <summary>
         /// Specify if auto redirect is enabled
@@ -45,5 +45,11 @@
         /// </summary>
         /// <value>MaxConnectionsPerServer</value>
         public int MaxConnectionsPerServer { get; private set; }
+
+        /// <summary>
+        /// Specify is UseDefaultCredentials set on HttpClientHandler.
+        /// </summary>
+        /// <value>UseDefaultCredentials</value>
+        public bool UseDefaultCredentials { get; private set; }
     }
 }
