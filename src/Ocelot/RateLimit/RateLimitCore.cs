@@ -21,7 +21,6 @@ namespace Ocelot.RateLimit
         {
             RateLimitCounter counter;
             var rule = option.RateLimitRule;
-
             var counterId = ComputeCounterKey(requestIdentity, option);
 
             // serial reads and writes
