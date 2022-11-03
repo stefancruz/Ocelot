@@ -1,4 +1,4 @@
- ![Ocelot Logo](/images/ocelot_logo.png)
+![Ocelot Logo](/images/ocelot_logo.png)
 
 [![CircleCI](https://circleci.com/gh/ThreeMammals/Ocelot/tree/main.svg?style=svg)](https://circleci.com/gh/ThreeMammals/Ocelot/tree/main)
 
@@ -13,7 +13,7 @@ that need a unified point of entry into their system. However it will work with 
 
 In particular I want easy integration with IdentityServer reference and bearer tokens. 
 
-We have been unable to find this in my current workplacewithout having to write our own Javascript middlewares to handle the IdentityServer reference tokens. We would rather use the IdentityServer code that already existsto do this.
+We have been unable to find this in my current workplace without having to write our own Javascript middlewares to handle the IdentityServer reference tokens. We would rather use the IdentityServer code that already exists to do this.
 
 Ocelot is a bunch of middlewares in a specific order.
 
@@ -45,7 +45,7 @@ A quick list of Ocelot's capabilities for more information see the [documentatio
 
 Ocelot is designed to work with ASP.NET and it targets `net6.0`.
 
-Install Ocelot and it's dependencies using NuGet.
+Install Ocelot and its dependencies using NuGet.
 
 `Install-Package Ocelot`
 
@@ -69,7 +69,7 @@ We love to receive contributions from the community so please keep them coming :
 
 Pull requests, issues and commentary welcome!
 
-Please complete the relevant template for issues and PRs. Sometimes it's worth getting in touch with us to discuss changes before doing any work incase this is something we are already doing or it might not make sense. We can also give advice on the easiest way to do things :)
+Please complete the relevant template for issues and PRs. Sometimes it's worth getting in touch with us to discuss changes before doing any work in case this is something we are already doing or it might not make sense. We can also give advice on the easiest way to do things :)
 
 Finally we mark all existing issues as help wanted, small, medium and large effort. If you want to contribute for the first time I suggest looking at a help wanted & small effort issue :)
 
