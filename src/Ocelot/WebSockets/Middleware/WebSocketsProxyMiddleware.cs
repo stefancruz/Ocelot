@@ -46,6 +46,10 @@ namespace Ocelot.WebSockets.Middleware
                 catch (OperationCanceledException)
                 {
                     await destination.CloseOutputAsync(WebSocketCloseStatus.EndpointUnavailable, null, cancellationToken);
+                    if (destination.State == WebSocketState.Open || destination.State == WebSocketState.CloseReceived)
+                    {
+                        await destination.CloseOutputAsync(WebSocketCloseStatus.EndpointUnavailable, null, cancellationToken);
+                    }
                     return;
                 }
                 catch (WebSocketException e)
@@ -53,6 +57,10 @@ namespace Ocelot.WebSockets.Middleware
                     if (e.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely)
                     {
                         await destination.CloseOutputAsync(WebSocketCloseStatus.EndpointUnavailable, null, cancellationToken);
+                        if (destination.State == WebSocketState.Open || destination.State == WebSocketState.CloseReceived)
+                        {
+                            await destination.CloseOutputAsync(WebSocketCloseStatus.EndpointUnavailable, null, cancellationToken);
+                        }
                         return;
                     }
                     throw;
