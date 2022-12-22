@@ -28,7 +28,7 @@
         {
             _hostingEnvironment = new Mock<IWebHostEnvironment>();
             // Clean up config files before each test
-            var subConfigFiles = new DirectoryInfo(".").GetFiles("ocelot.*.json");
+            var subConfigFiles = new DirectoryInfo(".").GetFiles("ocelot*.json");
 
             foreach (var config in subConfigFiles)
             {
@@ -116,7 +116,7 @@
                         Type = "Type"
                     },
                     RequestIdKey = "RequestIdKey"
-                }
+                },
             };
 
             _routeA = new FileConfiguration
@@ -139,10 +139,10 @@
                             {
                                 Host = "Host",
                                 Port = 80
-                            }
-                        }
-                    }
-                }
+                            },
+                        },
+                    },
+                },
             };
 
             _routeB = new FileConfiguration
@@ -165,8 +165,8 @@
                             {
                                 Host = "HostB",
                                 Port = 80
-                            }
-                        }
+                            },
+                        },
                     },
                     new FileRoute
                     {
@@ -184,10 +184,10 @@
                             {
                                 Host = "HostBB",
                                 Port = 80
-                            }
-                        }
-                    }
-                }
+                            },
+                        },
+                    },
+                },
             };
 
             _aggregate = new FileConfiguration
@@ -199,7 +199,7 @@
                         RouteKeys = new List<string>
                         {
                             "KeyB",
-                            "KeyBB"
+                            "KeyBB",
                         },
                         UpstreamPathTemplate = "UpstreamPathTemplate",
                     },
@@ -208,11 +208,11 @@
                         RouteKeys = new List<string>
                         {
                             "KeyB",
-                            "KeyBB"
+                            "KeyBB",
                         },
                         UpstreamPathTemplate = "UpstreamPathTemplate",
-                    }
-                }
+                    },
+                },
             };
 
             _envSpecific = new FileConfiguration
@@ -234,11 +234,11 @@
                                 new FileHostAndPort
                                 {
                                     Host = "HostSpec",
-                                    Port = 80
-                                }
-                            }
-                        }
-                    }
+                                    Port = 80,
+                                },
+                            },
+                        },
+                    },
             };
 
             string globalFilename = Path.Combine(folder, "ocelot.global.json");

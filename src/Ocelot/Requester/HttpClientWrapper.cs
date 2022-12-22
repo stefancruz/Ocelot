@@ -10,12 +10,14 @@ namespace Ocelot.Requester
     public class HttpClientWrapper : IHttpClient
     {
         public HttpClient Client { get; }
-
+        
         public bool ConnectionClose { get; }
+        public DelegatingHandler ClientMainHandler { get; }
 
-        public HttpClientWrapper(HttpClient client, bool connectionClose = false)
+        public HttpClientWrapper(HttpClient client, DelegatingHandler clientMainHandler, bool connectionClose = false)
         {
             Client = client;
+            ClientMainHandler = clientMainHandler;
             ConnectionClose = connectionClose;
         }
 
