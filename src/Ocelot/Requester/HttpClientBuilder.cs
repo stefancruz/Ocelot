@@ -62,7 +62,7 @@
                 Timeout = timeout
             };
 
-            _client = new HttpClientWrapper(_httpClient);
+            _client = new HttpClientWrapper(_httpClient, downstreamRoute.ConnectionClose);
 
             return _client;
         }
