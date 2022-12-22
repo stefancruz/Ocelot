@@ -13,17 +13,19 @@
     public class DownstreamRouteCreator : IDownstreamRouteProvider
     {
         private readonly IQoSOptionsCreator _qoSOptionsCreator;
-        private readonly ConcurrentDictionary<string, OkResponse<DownstreamRouteHolder>> _cache;
+        private readonly IDownstreamServiceFinder _serviceFinder;
+        private readonly ConcurrentDictionary<string, OkResponse<DownstreamRoute>> _cache;
 
-        public DownstreamRouteCreator(IQoSOptionsCreator qoSOptionsCreator)
+        public DownstreamRouteCreator(IQoSOptionsCreator qoSOptionsCreator, IDownstreamServiceFinder serviceFinder)
         {
             _qoSOptionsCreator = qoSOptionsCreator;
-            _cache = new ConcurrentDictionary<string, OkResponse<DownstreamRouteHolder>>();
+            _serviceFinder = serviceFinder;
+            _cache = new ConcurrentDictionary<string, OkResponse<DownstreamRoute>>();
         }
 
         public Response<DownstreamRouteHolder> Get(string upstreamUrlPath, string upstreamQueryString, string upstreamHttpMethod, IInternalConfiguration configuration, string upstreamHost)
         {
-            var serviceName = GetServiceName(upstreamUrlPath);
+            var serviceName = _serviceFinder.GetServiceName(upstreamUrlPath, upstreamQueryString, upstreamHttpMethod, upstreamHost, configuration);
 
             var downstreamPath = GetDownstreamPath(upstreamUrlPath);
 
@@ -105,19 +107,6 @@
 
             return upstreamUrlPath
                 .Substring(upstreamUrlPath.IndexOf('/', 1));
-        }
-
-        private static string GetServiceName(string upstreamUrlPath)
-        {
-            if (upstreamUrlPath.IndexOf('/', 1) == -1)
-            {
-                return upstreamUrlPath
-                    .Substring(1);
-            }
-
-            return upstreamUrlPath
-                .Substring(1, upstreamUrlPath.IndexOf('/', 1))
-                .TrimEnd('/');
         }
 
         private string CreateLoadBalancerKey(string downstreamTemplatePath, string httpMethod, LoadBalancerOptions loadBalancerOptions)
