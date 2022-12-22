@@ -14,13 +14,13 @@
     {
         private readonly IQoSOptionsCreator _qoSOptionsCreator;
         private readonly IDownstreamServiceFinder _serviceFinder;
-        private readonly ConcurrentDictionary<string, OkResponse<DownstreamRoute>> _cache;
+        private readonly ConcurrentDictionary<string, OkResponse<DownstreamRouteHolder>> _cache;
 
         public DownstreamRouteCreator(IQoSOptionsCreator qoSOptionsCreator, IDownstreamServiceFinder serviceFinder)
         {
             _qoSOptionsCreator = qoSOptionsCreator;
             _serviceFinder = serviceFinder;
-            _cache = new ConcurrentDictionary<string, OkResponse<DownstreamRoute>>();
+            _cache = new ConcurrentDictionary<string, OkResponse<DownstreamRouteHolder>>();
         }
 
         public Response<DownstreamRouteHolder> Get(string upstreamUrlPath, string upstreamQueryString, string upstreamHttpMethod, IInternalConfiguration configuration, string upstreamHost)

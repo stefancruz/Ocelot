@@ -49,6 +49,7 @@
         private List<Route> _result;
         private SecurityOptions _securityOptions;
         private Version _expectedVersion;
+        private Mock<IConnectionCloseCreator> _connectionCloseCreator;
 
         public RoutesCreatorTests()
         {
@@ -67,6 +68,8 @@
             _rrkCreator = new Mock<IRouteKeyCreator>();
             _soCreator = new Mock<ISecurityOptionsCreator>();
             _versionCreator = new Mock<IVersionCreator>();
+            _connectionCloseCreator = new Mock<IConnectionCloseCreator>();
+
 
             _creator = new RoutesCreator(
                 _cthCreator.Object,
@@ -83,7 +86,8 @@
                 _lboCreator.Object,
                 _rrkCreator.Object,
                 _soCreator.Object,
-                _versionCreator.Object
+                _versionCreator.Object,
+                _connectionCloseCreator.Object
                 );
         }
 
