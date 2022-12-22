@@ -69,34 +69,23 @@
 
         private HttpClientHandler CreateHandler(DownstreamRoute downstreamRoute)
         {
+            var handler = new HttpClientHandler
+            {
+                AllowAutoRedirect = downstreamRoute.HttpHandlerOptions.AllowAutoRedirect,
+                UseCookies = downstreamRoute.HttpHandlerOptions.UseCookieContainer,
+                UseProxy = downstreamRoute.HttpHandlerOptions.UseProxy,
+                MaxConnectionsPerServer = downstreamRoute.HttpHandlerOptions.MaxConnectionsPerServer,
+                UseDefaultCredentials = downstreamRoute.HttpHandlerOptions.UseDefaultCredentials,
+            };
+
             // Dont' create the CookieContainer if UseCookies is not set or the HttpClient will complain
             // under .Net Full Framework
-            var useCookies = downstreamRoute.HttpHandlerOptions.UseCookieContainer;
-
-            return useCookies ? UseCookiesHandler(downstreamRoute) : UseNonCookiesHandler(downstreamRoute);
-        }
-
-        private HttpClientHandler UseNonCookiesHandler(DownstreamRoute downstreamRoute)
-        {
-            return new HttpClientHandler
+            if (downstreamRoute.HttpHandlerOptions.UseCookieContainer)
             {
-                AllowAutoRedirect = downstreamRoute.HttpHandlerOptions.AllowAutoRedirect,
-                UseCookies = downstreamRoute.HttpHandlerOptions.UseCookieContainer,
-                UseProxy = downstreamRoute.HttpHandlerOptions.UseProxy,
-                MaxConnectionsPerServer = downstreamRoute.HttpHandlerOptions.MaxConnectionsPerServer,
-            };
-        }
+                handler.CookieContainer = new CookieContainer();
+            }
 
-        private HttpClientHandler UseCookiesHandler(DownstreamRoute downstreamRoute)
-        {
-            return new HttpClientHandler
-            {
-                AllowAutoRedirect = downstreamRoute.HttpHandlerOptions.AllowAutoRedirect,
-                UseCookies = downstreamRoute.HttpHandlerOptions.UseCookieContainer,
-                UseProxy = downstreamRoute.HttpHandlerOptions.UseProxy,
-                MaxConnectionsPerServer = downstreamRoute.HttpHandlerOptions.MaxConnectionsPerServer,
-                CookieContainer = new CookieContainer(),
-            };
+            return handler;
         }
 
         public void Save()

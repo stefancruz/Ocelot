@@ -22,7 +22,7 @@
             int maxConnectionPerServer = (options.MaxConnectionsPerServer > 0) ? maxConnectionPerServer = options.MaxConnectionsPerServer : maxConnectionPerServer = int.MaxValue;
 
             return new HttpHandlerOptions(options.AllowAutoRedirect,
-                options.UseCookieContainer, useTracing, options.UseProxy, maxConnectionPerServer);
+                options.UseCookieContainer, useTracing, options.UseProxy, maxConnectionPerServer, options.UseDefaultCredentials);
         }
     }
 }

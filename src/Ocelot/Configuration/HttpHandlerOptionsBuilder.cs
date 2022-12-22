@@ -7,6 +7,7 @@
         private bool _useTracing;
         private bool _useProxy;
         private int _maxConnectionPerServer;
+        private bool _useDefaultCredentials;
 
         public HttpHandlerOptionsBuilder WithAllowAutoRedirect(bool input)
         {
@@ -31,16 +32,22 @@
             _useProxy = useProxy;
             return this;
         }
+
         public HttpHandlerOptionsBuilder WithUseMaxConnectionPerServer(int maxConnectionPerServer)
         {
             _maxConnectionPerServer = maxConnectionPerServer;
             return this;
         }
 
+        public HttpHandlerOptionsBuilder WithUseDefaultCredentials(bool input)
+        {
+            _useDefaultCredentials = input;
+            return this;
+        }
 
         public HttpHandlerOptions Build()
         {
-            return new HttpHandlerOptions(_allowAutoRedirect, _useCookieContainer, _useTracing, _useProxy, _maxConnectionPerServer);
+            return new HttpHandlerOptions(_allowAutoRedirect, _useCookieContainer, _useTracing, _useProxy, _maxConnectionPerServer, _useDefaultCredentials);
         }
     }
 }
