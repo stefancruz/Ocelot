@@ -117,7 +117,7 @@ namespace Ocelot.UnitTests.Configuration
 
             public string RequestId { get; }
             public LoadBalancerOptions LoadBalancerOptions { get; }
-            public string DownstreamScheme { get; }
+            public string DownstreamScheme { get; set; }
             public QoSOptions QoSOptions { get; }
             public HttpHandlerOptions HttpHandlerOptions { get; }
             public Version DownstreamHttpVersion { get; }

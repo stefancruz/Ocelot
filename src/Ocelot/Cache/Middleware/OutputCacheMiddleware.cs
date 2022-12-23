@@ -71,11 +71,18 @@
 
             var downstreamResponse = httpContext.Items.DownstreamResponse();
 
-            cached = await CreateCachedResponse(downstreamResponse);
+            if (downstreamResponse.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                cached = await CreateCachedResponse(downstreamResponse);
 
-            _outputCache.Add(downStreamRequestCacheKey, cached, TimeSpan.FromSeconds(downstreamRoute.CacheOptions.TtlSeconds), downstreamRoute.CacheOptions.Region);
+                _outputCache.Add(downStreamRequestCacheKey, cached, TimeSpan.FromSeconds(downstreamRoute.CacheOptions.TtlSeconds), downstreamRoute.CacheOptions.Region);
 
-            Logger.LogDebug($"finished response added to cache for {downstreamUrlKey}");
+                Logger.LogDebug($"finished response added to cache for {downstreamUrlKey}");
+            }
+            else
+            {
+                Logger.LogDebug($"http request failed,  could not create cache for {downstreamUrlKey}");
+            }
         }
 
         private void SetHttpResponseMessageThisRequest(HttpContext context,

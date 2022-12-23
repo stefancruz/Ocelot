@@ -33,7 +33,7 @@ namespace Ocelot.Configuration
         public ServiceProviderConfiguration ServiceProviderConfiguration { get; }
         public string RequestId { get; }
         public LoadBalancerOptions LoadBalancerOptions { get; }
-        public string DownstreamScheme { get; }
+        public string DownstreamScheme { get; set; }
         public QoSOptions QoSOptions { get; }
         public HttpHandlerOptions HttpHandlerOptions { get; }
 
